@@ -6,9 +6,12 @@ use Twig\Environment;
 use Twig\Extension\DebugExtension;
 use Twig\Loader\FilesystemLoader;
 
+use App\Model\UserManager;
+
 abstract class AbstractController
 {
     protected Environment $twig;
+    protected array|false $user = false;
 
     /**
      *  Initializes this class.
@@ -24,5 +27,10 @@ abstract class AbstractController
             ]
         );
         $this->twig->addExtension(new DebugExtension());
+        if(isset($_SESSION["user_id"])){
+            $userManager = new UserManager();
+            $this->user = $userManager->selectOneById($_SESSION["user_id"]);
+            $this->twig->addGlobal('user', $this->user);
+        }
     }
 }
